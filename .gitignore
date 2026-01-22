@@ -1,0 +1,17 @@
+# Rust
+target/
+Cargo.lock
+
+# Node.js / Angular
+node_modules/
+dist/
+*.log
+.env
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
