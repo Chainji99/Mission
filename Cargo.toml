@@ -1,2 +1,2 @@
 [workspace]
-members = ["ap"]
+members = ["ap", "ap/server"]

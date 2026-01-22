@@ -85,4 +85,13 @@ export class PassportService {
     this.data.set(undefined);
     localStorage.removeItem(this._storage_key);
   }
+
+  // 🔹 ฟังก์ชัน: บันทึก avatar URL
+  saveAvatarImage(url: string): void {
+    const passport = this.data();
+    if (passport) {
+      passport.avatar_url = url;
+      this.savePassportToLocalStorage();
+    }
+  }
 }
