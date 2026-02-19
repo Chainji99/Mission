@@ -1,0 +1,115 @@
+<div class="friend-panel-container" [class.expanded]="isExpanded">
+  <div class="friend-header">
+    <div class="title">
+      <mat-icon>group</mat-icon>
+      <span>Friends</span>
+    </div>
+    <button mat-icon-button (click)="toggleExpand()" class="toggle-btn">
+      <mat-icon>{{ isExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </button>
+  </div>
+
+  @if (isExpanded) {
+  <div class="friend-content">
+    <!-- Tabs Layout -->
+    <div class="friends-tabs">
+      <button class="tab-item" [class.active]="selectedTab === 'friends'" (click)="selectedTab = 'friends'">
+        <span>Friends</span>
+      </button>
+      <button class="tab-item" [class.active]="selectedTab === 'pending'" (click)="selectedTab = 'pending'">
+        <span>Pending</span>
+        @if (incomingList().length > 0) {
+        <span class="count-badge">{{ incomingList().length }}</span>
+        }
+      </button>
+      <button class="tab-item" [class.active]="selectedTab === 'add'" (click)="selectedTab = 'add'">
+        <mat-icon>person_add</mat-icon>
+      </button>
+    </div>
+
+    <div class="tab-content">
+      @if (selectedTab === 'friends') {
+      <div class="friends-section">
+        @if (friendsList().length > 0) {
+        @for (u of friendsList(); track u.username) {
+        <div class="friend-item" (click)="startChat(u.username)">
+          <div class="friend-name">{{u.display_name}} (@{{u.username}})</div>
+          <div class="friend-actions">
+            <button mat-icon-button color="primary" (click)="$event.stopPropagation(); startChat(u.username)"
+              title="Chat">
+              <mat-icon>chat</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="$event.stopPropagation(); removeFriend(u.username)"
+              title="Remove Friend">
+              <mat-icon>person_remove</mat-icon>
+            </button>
+          </div>
+        </div>
+        }
+        } @else {
+        <div class="empty-state">No friends yet</div>
+        }
+      </div>
+      }
+
+      @if (selectedTab === 'pending') {
+      <div class="pending-container">
+        @if (incomingList().length > 0) {
+        <div class="friends-section">
+          <div class="friends-title">Incoming</div>
+          @for (u of incomingList(); track u.username) {
+          <div class="friend-item">
+            <div class="friend-name">{{u.display_name}} (@{{u.username}})</div>
+            <div class="friend-actions">
+              <button mat-icon-button color="primary" (click)="acceptFriend(u.username)" title="Accept">
+                <mat-icon>check_circle</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="rejectFriend(u.username)" title="Reject">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+        }
+
+        @if (outgoingList().length > 0) {
+        <div class="friends-section">
+          <div class="friends-title">Outgoing</div>
+          @for (u of outgoingList(); track u.username) {
+          <div class="friend-item">
+            <div class="friend-name">{{u.display_name}} (@{{u.username}})</div>
+            <div class="friend-actions">
+              <button mat-icon-button (click)="cancelOutgoing(u.username)" title="Cancel Request">
+                <mat-icon>undo</mat-icon>
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+        }
+
+        @if (incomingList().length === 0 && outgoingList().length === 0) {
+        <div class="empty-state">No pending requests</div>
+        }
+      </div>
+      }
+
+      @if (selectedTab === 'add') {
+      <div class="friend-add">
+        <div class="add-header">Add a Friend</div>
+        <div class="add-input-group">
+          <input class="friend-input" [(ngModel)]="friendQuery" placeholder="Enter username..."
+            (keyup.enter)="addFriendByUsername()" />
+          <button class="add-btn" (click)="addFriendByUsername()" [disabled]="!friendQuery.trim()"
+            title="Send Friend Request">
+            <mat-icon>send</mat-icon>
+          </button>
+        </div>
+        <p class="add-hint">You can add friends by their @username.</p>
+      </div>
+      }
+    </div>
+  </div>
+  }
+</div>

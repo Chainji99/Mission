@@ -13,6 +13,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { PassportService } from '../_services/passport-service';
 
@@ -55,10 +56,14 @@ export function PasswordMatchValidator(
   selector: 'app-login',
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule]
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule]
 })
 export class Login {
-  mode: 'login' | 'register' = 'login'; // เริ่มต้นเป็นโหมดล็อกอิน
+  private _passport = inject(PassportService);
+  private _router = inject(Router);
+
+  mode: 'login' | 'register' | 'forgot-password' = 'login';
+  isResetSent = signal(false);
 
   form: FormGroup = new FormGroup({});
 
@@ -71,6 +76,7 @@ export class Login {
   };
 
   errorFromServer = '';
+  isLoading = signal(false);
 
   constructor(private fb: FormBuilder) {
     this.initializeForm();
@@ -90,21 +96,39 @@ export class Login {
     });
   }
 
-  toggleMode(): void {
-    this.mode = this.mode === 'login' ? 'register' : 'login';
+  toggleMode(newMode: 'login' | 'register' | 'forgot-password'): void {
+    this.mode = newMode;
+    this.isResetSent.set(false);
+    this.errorFromServer = '';
     this.updateForm();
   }
 
   private updateForm(): void {
     if (this.mode === 'register') {
       // เพิ่มฟิลด์สำหรับสมัครสมาชิก
-      this.form.addControl('confirm_password', new FormControl('', Validators.required));
-      this.form.addControl('display_name', new FormControl('', Validators.required));
+      if (!this.form.contains('confirm_password')) {
+        this.form.addControl('confirm_password', new FormControl('', Validators.required));
+      }
+      if (!this.form.contains('display_name')) {
+        this.form.addControl('display_name', new FormControl('', Validators.required));
+      }
+      if (!this.form.contains('password')) {
+        this.form.addControl('password', new FormControl('', [Validators.required, PasswordValidator(8, 16)]));
+      }
 
       // เพิ่ม validator ตรวจสอบรหัสผ่านตรงกัน
       this.form.addValidators(PasswordMatchValidator('password', 'confirm_password'));
+    } else if (this.mode === 'forgot-password') {
+      // เฉพาะ username
+      this.form.removeControl('confirm_password');
+      this.form.removeControl('display_name');
+      this.form.removeControl('password');
+      this.form.removeValidators(PasswordMatchValidator('password', 'confirm_password'));
     } else {
-      // ลบฟิลด์ที่ไม่จำเป็นเมื่อกลับไปโหมดล็อกอิน
+      // ล็อกอิน
+      if (!this.form.contains('password')) {
+        this.form.addControl('password', new FormControl('', [Validators.required, PasswordValidator(8, 16)]));
+      }
       this.form.removeControl('confirm_password');
       this.form.removeControl('display_name');
 
@@ -125,9 +149,9 @@ export class Login {
         if (control.hasError('required')) {
           this.errorMessage.username.set('Username is required');
         } else if (control.hasError('minlength')) {
-          this.errorMessage.username.set('Must be at least 4 characters long');
+          this.errorMessage.username.set('At least 4 characters');
         } else if (control.hasError('maxlength')) {
-          this.errorMessage.username.set('Must be 16 characters or fewer');
+          this.errorMessage.username.set('Maximum 16 characters');
         } else {
           this.errorMessage.username.set('');
         }
@@ -137,17 +161,17 @@ export class Login {
         if (control.hasError('required')) {
           this.errorMessage.password.set('Password is required');
         } else if (control.hasError('invalidMinlength')) {
-          this.errorMessage.password.set('Password must be at least 8 characters');
+          this.errorMessage.password.set('At least 8 characters');
         } else if (control.hasError('invalidMaxlength')) {
-          this.errorMessage.password.set('Password must be 16 characters or fewer');
+          this.errorMessage.password.set('Maximum 16 characters');
         } else if (control.hasError('invalidLowerCase')) {
-          this.errorMessage.password.set('Password must contain at least one lowercase letter');
+          this.errorMessage.password.set('Add lowercase letter (a-z)');
         } else if (control.hasError('invalidUpperCase')) {
-          this.errorMessage.password.set('Password must contain at least one uppercase letter');
+          this.errorMessage.password.set('Add uppercase letter (A-Z)');
         } else if (control.hasError('invalidNumeric')) {
-          this.errorMessage.password.set('Password must contain at least one number');
+          this.errorMessage.password.set('Add a number (0-9)');
         } else if (control.hasError('invalidSpecialChar')) {
-          this.errorMessage.password.set('Password must contain at least one special character (@#$%^&* etc.)');
+          this.errorMessage.password.set('Add special character (!@#$%^&*)');
         } else {
           this.errorMessage.password.set('');
         }
@@ -173,62 +197,52 @@ export class Login {
     }
   }
 
-  updateErrorMessages(control: AbstractControl, fieldName: string): void {
-    switch (fieldName) {
-      case 'username':
-        if (control.hasError('required')) {
-          this.errorMessage.username.set('required');
-        } else if (control.hasError('minlength')) {
-          this.errorMessage.username.set('must be at least 4 characters long');
-        } else if (control.hasError('maxlength')) { 
-          this.errorMessage.username.set('must be 16 characters or fewer');
-        } else {
-          this.errorMessage.username.set('');
-        }
-        break;
+  async onSubmit() {
+    if (this.form.invalid) return;
 
-      case 'password':
-        if (control.hasError('required')) {
-          this.errorMessage.password.set('required');
-        } else if (control.hasError('invalidMinlength')) {
-          this.errorMessage.password.set('must be at least 8 characters long');
-        } else if (control.hasError('invalidMaxlength')) {
-          this.errorMessage.password.set('must be 16 characters or fewer');
-        } else if (control.hasError('invalidLowerCase')) {
-          this.errorMessage.password.set('must contain minimum of 1 lower-case letter [a-z].');
-        } else if (control.hasError('invalidUpperCase')) {
-          this.errorMessage.password.set('must contain minimum of 1 capital letter [A-Z].');
-        } else if (control.hasError('invalidNumeric')) {
-          this.errorMessage.password.set('must contain minimum of 1 numeric character [0-9].');
-        } else if (control.hasError('invalidSpecialChar')) {
-          this.errorMessage.password.set('must contain minimum of 1 special character: !@#$%^&*(),.?":{}|<>');
-        } else {
-          this.errorMessage.password.set('');
-        }
-        break;
+    this.isLoading.set(true);
+    const formData = this.form.value;
+    let error = '';
 
-      case 'confirm_password':
-        if (control.hasError('required')) {
-          this.errorMessage.confirm_password.set('required'); // ⚠️ แก้จาก .password เป็น .confirm_password
-        } else if (control.hasError('mismatch')) {
-          this.errorMessage.confirm_password.set('do not match password');
-        } else {
-          this.errorMessage.confirm_password.set('');
+    try {
+      if (this.mode === 'login') {
+        error = await this._passport.get({
+          username: formData.username,
+          password: formData.password
+        });
+      } else if (this.mode === 'register') {
+        error = await this._passport.new({
+          username: formData.username,
+          password: formData.password,
+          display_name: formData.display_name
+        });
+      } else if (this.mode === 'forgot-password') {
+        error = await this._passport.requestPasswordReset(formData.username);
+        if (!error) {
+          this.isResetSent.set(true);
         }
-        break;
+      }
+
+      if (error) {
+        this.errorFromServer = error;
+      } else {
+        this._router.navigate(['/']);
+      }
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
-  onSubmit(): void {
-    if (this.form.valid) {
-      const formData = this.form.value;
-      if (this.mode === 'login') {
-        console.log('Login with:', formData);
-        // TODO: เรียก AuthService.login(formData.username, formData.password)
-      } else {
-        console.log('Register with:', formData);
-        // TODO: เรียก AuthService.register(formData)
-      }
+  async onGoogleLogin() {
+    this.isLoading.set(true);
+    try {
+      const url = await this._passport.getGoogleAuthUrl();
+      window.location.href = url;
+    } catch (error) {
+      console.error('Failed to get Google Auth URL', error);
+      this.errorFromServer = this._passport.formatError(error);
+    } finally {
+      this.isLoading.set(false);
     }
   }
 }

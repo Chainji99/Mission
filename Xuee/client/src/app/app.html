@@ -1,9 +1,25 @@
-<div class="container">
-  <ngx-spinner type="ball_8bits" color="#333" size="medium" bdColor="rgba(0, 0, 0, 0.8)" [fullScreen]="true">
-    <p>Loading...</p>
-  </ngx-spinner>
-  <app-navbar></app-navbar>
-  <div class="content">
-    <router-outlet></router-outlet>
+<div class="app-container">
+  <!-- Starry Background -->
+  <div id="stars"></div>
+  <div id="stars2"></div>
+  <div id="stars3"></div>
+  <div id="title-bg">
+    <span>XUE</span>
+    <br>
+    <span>SYSTEM</span>
   </div>
+
+  <ngx-spinner color="#fff" size="medium" bdColor="rgba(0, 0, 0, 0.9)" [fullScreen]="true">
+    <div class="loading-box">
+      <span class="loader"></span>
+    </div>
+  </ngx-spinner>
+  
+  <aside class="sidebar-wrapper">
+    <app-navbar></app-navbar>
+  </aside>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
 </div>

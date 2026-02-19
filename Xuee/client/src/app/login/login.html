@@ -1,82 +1,108 @@
-
 <div class="login-container">
-  <form (ngSubmit)="onSubmit()" [formGroup]="form" autocomplete="off">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        @if (mode === 'login') { LOGIN }
+        @if (mode === 'register') { Create Account }
+        @if (mode === 'forgot-password') { Reset Password }
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
 
-    <!-- Username Field -->
-    <mat-form-field appearance="outline">
-      <mat-label>Username</mat-label>
-      <input matInput type="text" placeholder="username" 
-             (input)="updateErrorMessage('username')"
-             formControlName="username">
-      @if (form.controls['username'].invalid) {
-        <mat-error>{{ errorMessage.username() }}</mat-error>
-      }
-    </mat-form-field>
+      @if (isResetSent()) {
+      <div class="success-message">
+        <p>Reset link sent to your email!</p>
+        <button mat-button (click)="toggleMode('login')">Back to Login</button>
+      </div>
+      } @else {
+      <form (ngSubmit)="onSubmit()" [formGroup]="form" autocomplete="off">
 
-    <!-- Password Field -->
-    <mat-form-field appearance="outline">
-      <mat-label>Password</mat-label>
-      <input matInput type="password" placeholder="password"
-             (input)="updateErrorMessage('password')"
-             formControlName="password">
-      @if (form.controls['password'].invalid) {
-        <mat-error>{{ errorMessage.password() }}</mat-error>
-      }
-    </mat-form-field>
+        <!-- Username Field -->
+        <mat-form-field appearance="fill" class="zen-input">
+          <mat-label>Username or Email</mat-label>
+          <input matInput type="text" placeholder="Enter your username or email"
+            (input)="updateErrorMessage('username')" formControlName="username">
+          @if (form.controls['username'] && form.controls['username'].invalid) {
+          <mat-error>{{ errorMessage.username() }}</mat-error>
+          }
+        </mat-form-field>
 
-    <!-- Dynamic Fields: Only show in 'register' mode -->
-    @if (mode === 'register') {
+        <!-- Password Field -->
+        @if (mode !== 'forgot-password') {
+        <mat-form-field appearance="fill" class="zen-input">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" placeholder="Enter your password" (input)="updateErrorMessage('password')"
+            formControlName="password">
+          @if (form.controls['password'] && form.controls['password'].invalid) {
+          <mat-error>{{ errorMessage.password() }}</mat-error>
+          }
+        </mat-form-field>
+        }
 
-      <!-- Confirm Password Field -->
-      <mat-form-field appearance="outline">
-        <mat-label>Confirm Password</mat-label>
-        <input matInput type="password" placeholder="confirm password"
-               (input)="updateErrorMessage('confirm_password')"
-               formControlName="confirm_password">
-        @if (form.controls['confirm_password'].invalid) {
+        <!-- Forgot Password Link -->
+        @if (mode === 'login') {
+        <div class="forgot-link">
+          <span (click)="toggleMode('forgot-password')">Forgot password?</span>
+        </div>
+        }
+
+        <!-- Dynamic Fields: Only show in 'register' mode -->
+        @if (mode === 'register') {
+
+        <!-- Confirm Password Field -->
+        <mat-form-field appearance="fill" class="zen-input">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput type="password" placeholder="Confirm your password"
+            (input)="updateErrorMessage('confirm_password')" formControlName="confirm_password">
+          @if (form.controls['confirm_password'] && form.controls['confirm_password'].invalid) {
           <mat-error>{{ errorMessage.confirm_password() }}</mat-error>
-        }
-      </mat-form-field>
+          }
+        </mat-form-field>
 
-      <!-- Display Name Field -->
-      <mat-form-field appearance="outline">
-        <mat-label>Display Name</mat-label>
-        <input matInput type="text" placeholder="display name"
-               (input)="updateErrorMessage('display_name')"
-               formControlName="display_name">
-        @if (form.controls['display_name'].invalid) {
+        <!-- Display Name Field -->
+        <mat-form-field appearance="fill" class="zen-input">
+          <mat-label>Display Name</mat-label>
+          <input matInput type="text" placeholder="Enter your display name" (input)="updateErrorMessage('display_name')"
+            formControlName="display_name">
+          @if (form.controls['display_name'] && form.controls['display_name'].invalid) {
           <mat-error>{{ errorMessage.display_name() }}</mat-error>
+          }
+        </mat-form-field>
+
         }
-      </mat-form-field>
 
-    }
+        <!-- Submit Button -->
+        <button mat-raised-button type="submit" class="blue" [disabled]="!form.valid || isLoading()">
+          @if (isLoading()) {
+          <span class="loader loader-sm"></span>
+          } @else {
+          @if (mode === 'login') { Login }
+          @if (mode === 'register') { Sign Up }
+          @if (mode === 'forgot-password') { Send Reset Link }
+          }
+        </button>
 
-    <!-- Submit Button -->
-    <button mat-raised-button type="submit" class="blue" [disabled]="!form.valid">
-      @if (mode === 'login') { LOGIN }
-      @if (mode !== 'login') { GET START }
-    </button>
+      </form>
+      }
 
-  </form>
+      @if(errorFromServer !== '') {
+      <span class="error">{{errorFromServer}}</span>
+      }
 
-  <!-- Toggle Text: "or" -->
-  <div class="login-spacer">or</div>
-
-  <!-- Toggle Link: Switch between Login / Register -->
-  @if (mode === 'login') {
-    <div class="toggle">
-      New to MyApp? <span (click)="toggleMode()">Sign Up</span>
-    </div>
-  }
-
-  @if (mode !== 'login') {
-    <div class="toggle">
-      Already have an account? <span (click)="toggleMode()">Log in</span>
-    </div>
-  }
-
+      <!-- Toggle Link: Switch between Login / Register / Forgot Password -->
+      @if (mode === 'login') {
+      <div class="toggle">
+        New to Brawler? <span (click)="toggleMode('register')">Sign Up</span>
+      </div>
+      } @else if (mode === 'register') {
+      <div class="toggle">
+        Already have an account? <span (click)="toggleMode('login')">Log in</span>
+      </div>
+      } @else if (mode === 'forgot-password' && !isResetSent()) {
+      <div class="toggle">
+        Remembered your password? <span (click)="toggleMode('login')">Log in</span>
+      </div>
+      }
+    </mat-card-content>
+  </mat-card>
 </div>
-@if(errorFromServer !== '') {
-  <span class="error">{{errorFromServer}}</span>
-}
-<div class="login-spacer">or</div>

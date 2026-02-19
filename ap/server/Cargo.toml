@@ -13,7 +13,7 @@ chrono = { version = "0.4.42", features = ["serde"] }
 cookie = "0.18.1"
 diesel = { version = "2.3.3", features = ["postgres", "serde_json", "chrono", "r2d2"] }
 dotenvy = "0.15.7"
-jsonwebtoken = { version = "10.1.0", features = ["aws_lc_rs"] }
+jsonwebtoken = { version = "10.1.0", features = ["rust_crypto"] }
 mockall = "0.14.0"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"

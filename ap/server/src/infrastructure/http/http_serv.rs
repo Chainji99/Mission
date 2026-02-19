@@ -1,7 +1,8 @@
 use std::{net::SocketAddr, sync::Arc, time::Duration};
 
-use anyhow::{Ok, Result};
+use anyhow::Result;
 use axum::{
+    routing::get,
     Router,
     http::{
         Method, StatusCode,
@@ -23,6 +24,8 @@ use crate::{
     infrastructure::database::postgresql_connection::PgPoolSquad,
 };
 
+use super::routers;
+
 fn static_serve() -> Router {
     let dir = "statics";
 
@@ -31,23 +34,17 @@ fn static_serve() -> Router {
     Router::new().fallback_service(service)
 }
 
-fn api_serve() -> Router {
-    Router::new().fallback(|| async { (StatusCode::NOT_FOUND, "API not found") })
-        .nest("/brawlers", routers::brawlers::router(db_pool:Arc::clone(&db_pool)))
-        .fallback(|| async { (StatusCode::NOT_FOUND, "Route not found") })
-        .nest("/auth", routers::auth::router(db_pool:Arc::clone(&db_pool)))
-        .fallback(|| async { (StatusCode::NOT_FOUND, "Route not found") })
-        // .nest("/make-error", routers::default_router::make_error)
-    
+fn api_serve(db_pool: Arc<PgPoolSquad>) -> Router {
+    Router::new()
+        .nest("/authentication", routers::brawlers::router(db_pool.clone()))
+        .fallback(|| async { (StatusCode::NOT_FOUND, "API not found") })
 }
 
 pub async fn start(config: Arc<DotEnvyConfig>, db_pool: Arc<PgPoolSquad>) -> Result<()> {
     let app = Router::new()
         .merge(static_serve())
-        .nest("/api", api_serve())
-        // .fallback(default_router::health_check)
-        // .route("/health_check", get(default_router::health_check)
-        .route("/make-error", axum::routing::get(routers::default::default_router))
+        .nest("/api/v1", api_serve(db_pool.clone()))
+        .route("/health", get(|| async { "OK" }))
         .layer(tower_http::limit::RequestRateLimitLayer::new(
             config.server.rate_limit.requests,
             Duration::from_secs(config.server.rate_limit.per_seconds),

@@ -1,8 +1,30 @@
-<div class="noise"></div>
-<div class="overlay"></div>
-<div class="terminal">
-  <h1>Error <span class="errorcode">404</span></h1>
-  <p class="output">The page you are looking for might have been removed, had its name changed or is temporarily unavailable.</p>
-  <p class="output">Please try to <a href="#1">go back</a> or <a href="#2">return to the homepage</a>.</p>
-  <p class="output">Good luck.</p>
+<div class="not-found-wrapper">
+  <div class="stars-container">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>
+  </div>
+
+  <div class="content-box">
+    <div class="glitch-wrapper">
+      <h1 class="error-code" data-text="404">404</h1>
+    </div>
+
+    <div class="lost-text">
+      <h2>LOST IN THE NEBULA</h2>
+      <p>The coordinates you're looking for are beyond the reachable sector.</p>
+    </div>
+
+    <div class="nebula-visual">
+      <div class="nebula-circle"></div>
+      <div class="nebula-circle small"></div>
+    </div>
+
+    <div class="actions">
+      <button mat-flat-button color="primary" (click)="goHome()" class="home-btn">
+        <mat-icon>rocket_launch</mat-icon>
+        <span>Return to Base</span>
+      </button>
+    </div>
+  </div>
 </div>

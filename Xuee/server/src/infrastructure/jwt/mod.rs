@@ -1,0 +1,25 @@
+pub mod authentication_model;
+pub mod jwt_model;
+use anyhow::Result;
+use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
+
+pub fn generate_token(secret: String, claims: &jwt_model::Claims) -> Result<String> {
+    // HS256
+    let token = encode(
+        &Header::default(),
+        claims,
+        &EncodingKey::from_secret(secret.as_ref()),
+    )?;
+
+    Ok(token)
+}
+
+pub fn verify_token(token: &str, secret: &str) -> Result<jwt_model::Claims> {
+    let token_data = decode::<jwt_model::Claims>(
+        token,
+        &DecodingKey::from_secret(secret.as_ref()),
+        &Validation::default(),
+    )?;
+
+    Ok(token_data.claims)
+}

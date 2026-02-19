@@ -1,0 +1,44 @@
+<div class="zen-dialog">
+  <h2 mat-dialog-title class="ink-title">เปลี่ยนรูปโปรไฟล์</h2>
+  
+  <mat-dialog-content class="zen-content">
+    <div class="upload-wrapper">
+      <div class="file-input-container">
+        <input type="file" #fileInput accept="image/png, image/jpeg, image/gif" (change)="onFileSelected($event)" class="hidden-input">
+        <button mat-button class="zen-btn" (click)="fileInput.click()">
+          <mat-icon>add_photo_alternate</mat-icon>
+          เลือกรูปภาพใหม่
+        </button>
+      </div>
+
+      <div class="preview-container" [class.has-preview]="previewUrl">
+        @if (previewUrl) {
+          <img [src]="previewUrl" alt="Preview" class="preview-image">
+        } @else {
+          <div class="preview-placeholder">
+            <mat-icon>image</mat-icon>
+            <p>ยังไม่ได้เลือกรูปภาพ</p>
+          </div>
+        }
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="zen-actions">
+    <button mat-button class="cancel-btn" (click)="onCancel()" [disabled]="isUploading()">ยกเลิก</button>
+    <button mat-button class="upload-btn" (click)="onUpload()" [disabled]="!selectedFile || isUploading()">
+      @if (isUploading()) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        อัปโหลด
+      }
+    </button>
+  </mat-dialog-actions>
+
+  @if (errorMessage()) {
+    <div class="error-msg">
+      <mat-icon style="vertical-align: middle; margin-right: 5px; font-size: 18px; width: 18px; height: 18px;">error_outline</mat-icon>
+      {{ errorMessage() }}
+    </div>
+  }
+</div>

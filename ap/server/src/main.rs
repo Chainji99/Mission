@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use server::{
     config::config_loader,
-    infrastructure::{database::postgresql_connection, http::http_serv::start},
+    infrastructure::{database::{postgresql_connection, seed}, http::http_serv::start},
 };
 use tracing::{error, info};
 
@@ -31,6 +31,14 @@ async fn main() {
         }
     };
     info!("Connected DB");
+
+    // Seed test users if SEED_DATA environment variable is set
+    if std::env::var("SEED_DATA").is_ok() {
+        info!("Seeding test users...");
+        if let Err(e) = seed::seed_test_users(&postgres_pool).await {
+            error!("Failed to seed users: {}", e);
+        }
+    }
 
     start(Arc::new(dotenvy_env), Arc::new(postgres_pool))
         .await

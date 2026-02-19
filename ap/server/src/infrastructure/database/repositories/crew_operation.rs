@@ -1,27 +1,17 @@
-#[async_trait]
-impl CrewPaticipationRepository for CrewPaticipationPostgres {
-    async fn join(&self, crew_memberships: CrewMemberShips) -> Result<()> {
+use anyhow::Result;
 
-        let mut connection = Arc::clone(&self.db_pool).get()?;
-        insert_into(crew_memberships::table) //diesel::dsl::insert_into,
-            .values(crew_memberships)
-            .execute(&mut connection)?;
+pub struct CrewOperationRepository;
 
-        Ok(())
-
+impl CrewOperationRepository {
+    pub fn new() -> Self {
+        Self
     }
 
-    async fn leave(&self, crew_memberships: CrewMemberShips) -> Result<()> {
-
-        let mut connection = Arc::clone(&self.db_pool).get()?;
-
-        delete(crew_memberships::table)
-            .filter(crew_memberships::brawler_id.eq(crew_memberships.brawler_id))
-            .filter(crew_memberships::mission_id.eq(crew_memberships.mission_id))
-            .execute(&mut connection)?;
-
+    pub async fn join(&self, _mission_id: i32, _brawler_id: i32) -> Result<()> {
         Ok(())
-
     }
 
+    pub async fn leave(&self, _mission_id: i32, _brawler_id: i32) -> Result<()> {
+        Ok(())
+    }
 }

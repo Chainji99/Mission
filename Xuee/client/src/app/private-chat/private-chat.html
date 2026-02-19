@@ -1,0 +1,54 @@
+<div class="private-chat-view">
+    <!-- Header -->
+    <div class="chat-header">
+        <button mat-icon-button (click)="back()" class="back-btn">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="user-info">
+            <div class="avatar">
+                <mat-icon>person</mat-icon>
+            </div>
+            <div class="details">
+                <h1>{{ displayName }}</h1>
+                <span class="status">Online</span>
+            </div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+
+    <!-- Messages Area -->
+    <div class="messages-container" #messagesContainer>
+        <div class="messages-list">
+            @for (m of messages; track $index) {
+            <div class="message-row" [class.own]="m.sender === 'You'">
+                <div class="message-bubble">
+                    <div class="text">{{ m.text }}</div>
+                    <div class="time">{{ m.ts | date:'shortTime' }}</div>
+                </div>
+            </div>
+            }
+            @if (messages.length === 0) {
+            <div class="empty-chat">
+                <mat-icon>chat_bubble_outline</mat-icon>
+                <p>Start a conversation with {{ displayName }}</p>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-container">
+        <div class="input-wrapper">
+            <button mat-icon-button class="attach-btn">
+                <mat-icon>add_circle_outline</mat-icon>
+            </button>
+            <input [(ngModel)]="input" placeholder="Type a message..." (keyup.enter)="send()" />
+            <button mat-icon-button class="emoji-btn">
+                <mat-icon>sentiment_satisfied_alt</mat-icon>
+            </button>
+            <button mat-flat-button color="primary" class="send-btn" (click)="send()" [disabled]="!input.trim()">
+                <mat-icon>send</mat-icon>
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>Create New Mission</h2>
+<mat-dialog-content class="dialog-content">
+    <div class="form-grid">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Mission Name</mat-label>
+            <input matInput [(ngModel)]="addMission.name" placeholder="Enter mission name" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput [(ngModel)]="addMission.description" placeholder="Describe the mission" rows="3"></textarea>
+        </mat-form-field>
+
+        <div class="two-columns">
+            <mat-form-field appearance="outline">
+                <mat-label>Mission Date</mat-label>
+                <input matInput [(ngModel)]="addMission.mission_date" type="date" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Time</mat-label>
+                <input matInput [(ngModel)]="addMission.time" placeholder="e.g. 09:00 AM" />
+            </mat-form-field>
+        </div>
+
+        <div class="two-columns">
+            <mat-form-field appearance="outline">
+                <mat-label>Contact Email</mat-label>
+                <input matInput [(ngModel)]="addMission.email" placeholder="email@example.com" type="email" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Contact Phone</mat-label>
+                <input matInput [(ngModel)]="addMission.phone" placeholder="Phone number" />
+            </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Location</mat-label>
+            <input matInput [(ngModel)]="addMission.location" placeholder="Mission location" />
+        </mat-form-field>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="!addMission.name">
+        Create Mission
+    </button>
+</mat-dialog-actions>

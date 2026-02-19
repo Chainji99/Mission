@@ -1,4 +1,11 @@
+use serde::{Deserialize, Serialize};
 use crate::domain::entities::brawlers::RegisterBrawlerEntity;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LoginModel {
+    pub username: String,
+    pub password: String,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RegisterBrawlerModel {
@@ -17,9 +24,7 @@ impl RegisterBrawlerModel {
     }
 }
 
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
-
 pub struct UploadAvatarModel {
     #[serde(rename = "VarChar")]
     pub display_name: String,

@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "dev": "npm run dev --prefix client",
+    "server": "cargo run --manifest-path server/Cargo.toml",
+    "start": "start npm run dev && start npm run server"
+  },
   "dependencies": {
     "@angular/animations": "^21.1.1"
   }

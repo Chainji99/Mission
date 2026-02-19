@@ -1,0 +1,11 @@
+<mat-toolbar class="my-navbar">
+  <span style="font-weight: bold; font-size: 20px;">The Convergence</span>
+  <span class="spacer"></span>
+  @if (display_name()) {
+    <img src="{{avatar_url()}}" alt="user avatar" class="avatar" (click)="onUploadAvatar()">
+    <span>{{display_name()}}</span>
+    <button matButton (click)="logout()">Log-out</button>
+  } @else {
+    <button mat-stroked-button color="primary" (click)="login()">login</button>
+  }
+</mat-toolbar>

@@ -1,93 +1,36 @@
+use std::sync::Arc;
+use anyhow::Result;
+
 pub struct MissionOperationUseCase<T1, T2>
 where
-    T1: MissionOperationRepository + Send + Sync,
-    T2: MissionViewingRepository + Send + Sync,
+    T1: Send + Sync,
+    T2: Send + Sync,
 {
     mission_operation_repository: Arc<T1>,
-    missiom_viewing_repository: Arc<T2>,
+    mission_viewing_repository: Arc<T2>,
 }
 
 impl<T1, T2> MissionOperationUseCase<T1, T2>
 where
-    T1: MissionOperationRepository + Send + Sync,
-    T2: MissionViewingRepository + Send + Sync,
+    T1: Send + Sync,
+    T2: Send + Sync,
 {
-    pub fn new() {}
-    pub async fn in_progress() {}
-    pub async fn to_completed() {}
-    pub async fn to_failed() {}
-}
-    pub fn new(
-mission_operation_repository: Arc<T1>, 
-missiom_viewing_repository: Arc<T2>
-    ) -> Self {
+    pub fn new(mission_operation_repository: Arc<T1>, mission_viewing_repository: Arc<T2>) -> Self {
         Self {
             mission_operation_repository,
-            missiom_viewing_repository,
+            mission_viewing_repository,
         }
     }
-    pub async fn in_progress(&self, mission_id: i32, chief_id: i32) -> Result<i32> {
-    let mission = self
-        .missiom_viewing_repository
-        .view_detail(mission_id)
-        .await?;
 
-    let crew_count = self
-        .missiom_viewing_repository
-        .crew_counting(mission_id)
-        .await?;
-
-    let is_status_open_or_fail = mission.status == MissionStatuses::Open.to_string()
-            || mission.status == MissionStatuses::Failed.to_string();
-
-    pub async fn to_completed(&self, mission_id: i32, chief_id: i32) -> Result<i32> {
-    let mission = self
-        .missiom_viewing_repository
-        .view_detail(mission_id)
-        .await?;
-
-    let update_condition = mission.status == MissionStatuses::InProgress.to_string()
-        && mission.chief_id == chief_id;
-    if !update_condition {
-        return Err(anyhow::anyhow!("Invalid condition to change stages!"));
+    pub async fn in_progress(&self, _mission_id: i32, _chief_id: i32) -> Result<i32> {
+        Ok(0)
     }
 
-    
-    }   
-    pub async fn to_completed(&self, mission_id: i32, chief_id: i32) -> Result<i32> {
-
-
-    let result = self
-        .mission_operation_repository
-        .to_completed(mission_id, chief_id)
-        .await?;
-
-    Ok(result)
-
+    pub async fn to_completed(&self, _mission_id: i32, _chief_id: i32) -> Result<i32> {
+        Ok(0)
     }
 
-    pub async fn to_failed(&self, mission_id: i32, chief_id: i32) -> Result<i32> {
-    let mission = self
-        .missiom_viewing_repository
-        .view_detail(mission_id)
-        .await?;
-
-    let update_condition = mission.status == MissionStatuses::InProgress.to_string()
-        && mission.chief_id == chief_id;
-    if !update_condition {
-        return Err(anyhow::anyhow!("Invalid condition to change stages!"));
-    }
-
-
-    }
-    pub async fn to_failed(&self, mission_id: i32, chief_id: i32) -> Result<i32> {
-
-
-    let result = self
-        .mission_operation_repository
-        .to_failed(mission_id, chief_id)
-        .await?;
-
-    Ok(result)
+    pub async fn to_failed(&self, _mission_id: i32, _chief_id: i32) -> Result<i32> {
+        Ok(0)
     }
 }

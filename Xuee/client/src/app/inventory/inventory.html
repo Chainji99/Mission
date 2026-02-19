@@ -1,0 +1,36 @@
+<div class="binder-container">
+  <div class="binder-header">
+    <h1>Code Card Binder</h1>
+    <div class="binder-stats">
+      <span>Collection: {{ uniqueInventory().length }} Unique Cards</span>
+    </div>
+  </div>
+
+  <div class="binder-book">
+    <div class="binder-grid">
+      @for (item of uniqueInventory(); track item.card.id) {
+        <div class="card-slot" [class]="item.card.rarity.toLowerCase()">
+          <div class="card-content">
+            <div class="level-badge">Lv.{{ item.user_card.level }}</div>
+            <div class="card-image">
+              <img [src]="getLanguageLogo(item.card.language)" [alt]="item.card.language">
+            </div>
+            <div class="card-details">
+              <h4>{{ item.card.name }}</h4>
+              <div class="exp-bar">
+                <div class="fill" [style.width.%]="(item.user_card.experience % 100)"></div>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="upgrade-btn" (click)="onUpgrade(item)">Upgrade</button>
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-binder">
+          <p>Your binder is empty.</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

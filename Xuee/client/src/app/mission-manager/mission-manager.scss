@@ -1,0 +1,196 @@
+::ng-deep {
+    .mission-container {
+        padding: 2rem;
+        background: transparent;
+        min-height: calc(100vh - 64px);
+        font-family: var(--font-body);
+        color: #ffffff !important;
+
+        .header-section {
+            margin-bottom: 2.5rem;
+            text-align: left;
+            border-left: 5px solid var(--red-seal);
+            padding-left: 1.5rem;
+
+            h2 {
+                font-family: var(--font-subheading, 'Cinzel', serif);
+                font-weight: 700;
+                font-size: 3.5rem;
+                color: #ffffff !important;
+                margin: 0;
+                letter-spacing: 4px;
+                text-transform: uppercase;
+                background: linear-gradient(to bottom, #fff, #aaa);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-shadow: none;
+            }
+        }
+
+        .actions-bar {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem 2.5rem;
+            background: rgba(255, 255, 255, 0.03); // Match global transparency
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: var(--red-seal);
+            }
+
+            .zen-btn {
+                background-color: transparent !important;
+                color: #ffffff !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                border-radius: 4px;
+                font-weight: 500;
+                padding: 0 1.5rem;
+                height: 40px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: all 0.3s ease;
+                
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.1) !important;
+                    border-color: var(--red-seal) !important;
+                    transform: translateY(-2px);
+                }
+
+                mat-icon {
+                    color: var(--red-seal) !important;
+                    margin-right: 8px;
+                }
+            }
+
+            .crew-count {
+                margin-left: auto;
+                font-weight: 600;
+                color: #ffffff !important;
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 4px;
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.02); // Match global transparency
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
+            position: relative;
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                border: 1px solid rgba(255, 68, 68, 0.1);
+                pointer-events: none;
+                border-radius: 12px;
+            }
+
+            table {
+                width: 100%;
+                background: transparent !important;
+
+                th.mat-header-cell, th.mat-mdc-header-cell {
+                    background-color: rgba(0, 0, 0, 0.3) !important;
+                    color: rgba(255, 255, 255, 0.6) !important;
+                    font-weight: 600 !important;
+                    font-size: 0.75rem !important;
+                    padding: 1.5rem !important;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 1.5px !important;
+                }
+
+                td.mat-cell, td.mat-mdc-cell {
+                    padding: 1.5rem !important;
+                    font-size: 0.9rem !important;
+                    color: #ffffff !important;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+
+                    &.mat-column-name {
+                        font-weight: 600 !important;
+                        color: #ffffff !important;
+                        font-size: 1rem !important;
+                    }
+                }
+
+                .status-badge {
+                        display: inline-block;
+                        padding: 6px 10px;
+                        border-radius: 4px;
+                        color: #fff;
+                        font-weight: 700;
+                        font-size: 0.85rem;
+                        text-transform: uppercase;
+                    
+                    .status-button { 
+                        background: transparent;
+                        border: none;
+                        cursor: pointer;
+                        padding: 0; /* let status-badge padding control spacing */
+                        color: inherit;
+                        font: inherit;
+                    }
+                    &.open { 
+                        background: rgba(76, 175, 80, 0.15); 
+                        color: #81c784; 
+                        border: 1px solid rgba(76, 175, 80, 0.3);
+                    }
+                    &.inprogress, &.in-progress { 
+                        background: rgba(255, 152, 0, 0.15); 
+                        color: #ffb74d; 
+                        border: 1px solid rgba(255, 152, 0, 0.3);
+                    }
+                    &.completed { 
+                        background: rgba(33, 150, 243, 0.15); 
+                        color: #64b5f6; 
+                        border: 1px solid rgba(33, 150, 243, 0.3);
+                    }
+                    &.failed { 
+                        background: rgba(244, 67, 54, 0.15); 
+                        color: #e57373; 
+                        border: 1px solid rgba(244, 67, 54, 0.3);
+                    }
+                }
+
+                tr.mat-mdc-row {
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                    
+                    &:hover {
+                        background-color: rgba(255, 255, 255, 0.03) !important;
+                    }
+
+                    &:last-child td {
+                        border-bottom: none !important;
+                    }
+                }
+            }
+        }
+    }
+}

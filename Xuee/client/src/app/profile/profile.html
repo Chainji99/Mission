@@ -1,1 +1,95 @@
-<p>profile works!</p>
+<div class="profile-page">
+  <div class="profile-content">
+    <div class="profile-header">
+      <div class="user-summary">
+        <div class="avatar-container">
+          <img [src]="avatar_url() || 'assets/anonymous_128.png'" alt="Avatar" class="main-avatar">
+          <div class="status-indicator"></div>
+          <button class="avatar-edit-overlay" (click)="onEditAvatar()">
+            <mat-icon>photo_camera</mat-icon>
+          </button>
+        </div>
+        <div class="user-titles">
+          <div class="name-badges">
+            <span class="main-display-name">{{ passportData()?.display_name }}</span>
+            <div class="badges">
+              <mat-icon class="badge-icon">auto_awesome</mat-icon>
+            </div>
+          </div>
+          <div class="user-meta">
+            <div class="member-since">MEMBER SINCE {{ memberSince() | uppercase }}</div>
+          </div>
+        </div>
+      </div>
+      <button class="edit-profile-btn" (click)="startEdit('name')">Edit User Profile</button>
+    </div>
+
+    <div class="profile-settings-card">
+      <!-- Display Name Section -->
+      <div class="settings-item">
+        <div class="item-info">
+          <label>DISPLAY NAME</label>
+          @if (!isEditingName()) {
+            <div class="value">{{ passportData()?.display_name }}</div>
+          } @else {
+            <div class="edit-input-wrapper">
+              <input type="text" [ngModel]="newName()" (ngModelChange)="newName.set($event)" [disabled]="isSaving()" placeholder="Enter display name">
+              <div class="edit-actions">
+                <button (click)="save('name')" [disabled]="isSaving()">Save</button>
+                <button class="cancel" (click)="cancelEdit('name')" [disabled]="isSaving()">Cancel</button>
+              </div>
+            </div>
+          }
+        </div>
+        @if (!isEditingName()) {
+          <button class="item-edit-btn" (click)="startEdit('name')">Edit</button>
+        }
+      </div>
+
+      <!-- Username Section -->
+      <div class="settings-item">
+        <div class="item-info">
+          <label>USERNAME</label>
+          @if (!isEditingUsername()) {
+            <div class="value">{{ passportData()?.username || 'Not set' }}</div>
+          } @else {
+            <div class="edit-input-wrapper">
+              <input type="text" [ngModel]="newUsername()" (ngModelChange)="newUsername.set($event)" [disabled]="isSaving()" placeholder="Enter username">
+              <div class="edit-actions">
+                <button (click)="save('username')" [disabled]="isSaving()">Save</button>
+                <button class="cancel" (click)="cancelEdit('username')" [disabled]="isSaving()">Cancel</button>
+              </div>
+            </div>
+          }
+        </div>
+        @if (!isEditingUsername()) {
+          <button class="item-edit-btn" (click)="startEdit('username')">Edit</button>
+        }
+      </div>
+
+      <!-- Email Section -->
+      <div class="settings-item">
+        <div class="item-info">
+          <label>EMAIL</label>
+          @if (!isEditingEmail()) {
+            <div class="value email-value">
+              <span>{{ getMaskedEmail(passportData()?.email) }}</span>
+              <button class="reveal-btn" (click)="toggleEmailVisibility()">{{ emailVisible() ? 'Hide' : 'Reveal' }}</button>
+            </div>
+          } @else {
+            <div class="edit-input-wrapper">
+              <input type="email" [ngModel]="newEmail()" (ngModelChange)="newEmail.set($event)" [disabled]="isSaving()" placeholder="Enter email">
+              <div class="edit-actions">
+                <button (click)="save('email')" [disabled]="isSaving()">Save</button>
+                <button class="cancel" (click)="cancelEdit('email')" [disabled]="isSaving()">Cancel</button>
+              </div>
+            </div>
+          }
+        </div>
+        @if (!isEditingEmail()) {
+          <button class="item-edit-btn" (click)="startEdit('email')">Edit</button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

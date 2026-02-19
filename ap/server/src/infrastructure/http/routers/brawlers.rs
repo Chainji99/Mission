@@ -1,54 +1,116 @@
-use std ::syncs::Arc;
+use std::sync::Arc;
 
-use axum::router;
+use axum::{
+    extract::Path,
+    http::StatusCode,
+    response::IntoResponse,
+    routing::post,
+    Json, Router, State,
+};
+use serde_json::json;
 
 use crate::{
     application::use_cases::authentication::AuthenticationUseCase,
-    infrastructure::Database::{
-        postgressal::PostgresBrawlerRepository, request_handlers::authentication_handler,
+    domain::{
+        repositories::brawlers::BrawlerRepository,
+        value_objects::brawler_model::{LoginModel, RegisterBrawlerModel},
     },
+    infrastructure::database::brawlers::PostgresBrawlerRepository,
 };
+use diesel::r2d2::{ConnectionManager, Pool};
+use diesel::PgConnection;
 
+type PgPool = Pool<ConnectionManager<PgConnection>>;
 
-pub fn router(db_pool: Arc<Pool<Postgres>>) -> Router {
+pub fn router(db_pool: Arc<PgPool>) -> Router {
     let brawler_repository = Arc::new(PostgresBrawlerRepository::new(db_pool.clone()));
     let authentication_use_case = Arc::new(AuthenticationUseCase::new(brawler_repository));
 
-    Router::new().with_stats(Arc::clone(&authentication_use_case))
-        .route("/login", post(authentication_handler::login::<AuthenticationUseCase<PostgresBrawlerRepository>>))
-        .with_stats(Arc::clone(&authentication_use_case))
-        .route("/register", post(register::<AuthenticationUseCase<PostgresBrawlerRepository>>))  
-
+    Router::new()
+        .route(
+            "/login",
+            post(login::<AuthenticationUseCase<PostgresBrawlerRepository>>),
+        )
+        .with_state(Arc::clone(&authentication_use_case))
+        .route(
+            "/register",
+            post(register::<AuthenticationUseCase<PostgresBrawlerRepository>>),
+        )
+        .with_state(Arc::clone(&authentication_use_case))
 }
 
-pub async fn register<T>(
-    state(user_case: Arc<T>): State<Arc<BrawlersUseCase<T>>>,
-    Json(payload): Json<RegisterBrawlerModel>,
-) -> impl IntoReponse
-where
-    T: BrawlerRepository + Send + Sync,
-{
-    match user_case.register(payload).await {
-        Ok(user_id) => (StatusCode::CREATED, user_id.to_string()).into_response(),
-
-        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
-    
-    }
-}
-
-pub async fn upload_avatar<T>(
-    State(brawler_use_case: Arc<T>): State<Arc<BrawlersUseCase<T>>>,
-    Path(user_id): Path<i32>,
-    Json(payload): Json<UploadAvatarModel>,
+pub async fn login<T>(
+    State(auth_use_case): State<Arc<T>>,
+    Json(payload): Json<LoginModel>,
 ) -> impl IntoResponse
 where
     T: BrawlerRepository + Send + Sync,
 {
-    match brawler_use_case
-        .upload_base64img(user_id, payload.base64_image).await{
-        
-        Ok(uploaded_img) => (StatusCode::OK, Json(uploaded_img)).into_response(),
+    match auth_use_case
+        .login(payload)
+        .await
+    {
+        Ok(passport) => (StatusCode::OK, Json(passport)).into_response(),
+        Err(e) => (
+            StatusCode::UNAUTHORIZED,
+            Json(json!({ "error": e.to_string() })),
+        )
+            .into_response(),
+    }
+}
 
-        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+pub async fn register<T>(
+    State(auth_use_case): State<Arc<T>>,
+    Json(payload): Json<RegisterBrawlerModel>,
+) -> impl IntoResponse
+where
+    T: BrawlerRepository + Send + Sync,
+{
+    match auth_use_case
+        .register(payload)
+        .await
+    {
+        Ok(user_id) => (
+            StatusCode::CREATED,
+            Json(json!({ "user_id": user_id })),
+        )
+            .into_response(),
+        Err(e) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "error": e.to_string() })),
+        )
+            .into_response(),
+    }
+}
+
+pub async fn upload_avatar<T>(
+    State(brawler_repository): State<Arc<T>>,
+    Path(user_id): Path<i32>,
+    Json(payload): Json<serde_json::Value>,
+) -> impl IntoResponse
+where
+    T: BrawlerRepository + Send + Sync,
+{
+    let base64_image = match payload.get("base64_image").and_then(|v| v.as_str()) {
+        Some(img) => img.to_string(),
+        None => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({ "error": "base64_image is required" })),
+            )
+                .into_response()
+        }
+    };
+
+    match brawler_repository
+        .upload_base64img(user_id, base64_image, None)
+        .await
+    {
+        Ok(uploaded_img) => (StatusCode::OK, Json(uploaded_img)).into_response(),
+        Err(e) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "error": e.to_string() })),
+        )
+            .into_response(),
     }
 }

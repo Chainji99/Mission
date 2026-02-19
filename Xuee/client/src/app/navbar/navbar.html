@@ -1,14 +1,51 @@
-<mat-toolbar class="my-navbar">
-  <span>LoL</span>
-  <span class="spacer"></span>
-  @if (display_name()) {
-    <button matButton [matMenuTriggerFor]="menu">
-      <img src="{{avatar_url()}}" alt="user avatar" class="avatar">
-      {{display_name()}}
+<div class="sidebar-nav">
+  <div class="logo-section" routerLink="/">
+    <span class="logo">Nebula</span>
+  </div>
+
+  <div class="nav-links">
+    @if(display_name()){
+    <a mat-button class="nav-item" routerLink="/all-missions" routerLinkActive="active">
+      <mat-icon>task_alt</mat-icon>
+      <span>All Missions</span>
+    </a>
+    <a mat-button class="nav-item" routerLink="/chief" routerLinkActive="active">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <span>Manage Missions</span>
+    </a>
+    }
+
+
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- Chat Panel Section -->
+  <app-chat-panel></app-chat-panel>
+
+  <!-- Friend Panel Section -->
+  <app-friend-panel></app-friend-panel>
+
+  <div class="user-section">
+    @if (display_name()) {
+    <div class="user-info-vertical">
+      <div class="user-profile" (click)="openProfile()">
+        <img [src]="avatar_url() || 'assets/anonymous_128.png'" alt="user avatar" class="avatar">
+        <div class="user-details">
+          <span class="username">{{display_name()}}</span>
+          <span class="status-badge">Online</span>
+        </div>
+      </div>
+      <button mat-button class="logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </div>
+    } @else {
+    <button mat-button class="login-btn" routerLink="/login">
+      <mat-icon>login</mat-icon>
+      <span>Login</span>
     </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item class="menu-button" router>Profile</button>
-      <button mat-menu-item class="menu-button" (click)="logout()">Log-out</button>
-    </mat-menu>
-  }
-</mat-toolbar>
+    }
+  </div>
+</div>

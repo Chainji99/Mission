@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from "@angular/common/http";
 import { inject } from "@angular/core";
-import { Loading } from "../../../_services/loading-service";
+import { Loading } from "../_services/loading-service";
 import { finalize } from "rxjs/operators";
 
 

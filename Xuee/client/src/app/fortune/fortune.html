@@ -1,0 +1,53 @@
+<div class="fortune-container">
+  <h1>Daily Fortune</h1>
+  <p class="subtitle">Shake the cylinder to reveal your destiny for today.</p>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <div class="shaking-cylinder">
+        <div class="sticks"></div>
+        <div class="container-body">
+          <span class="label">Kau Cim</span>
+        </div>
+      </div>
+      <p>Shaking...</p>
+    </div>
+  } @else if (fortune()) {
+    <div class="result-container">
+      <div class="paper-slip">
+        <div class="slip-header">
+          <span class="stick-number">No. {{ fortune()!.stick.number }}</span>
+          <span class="direction">Lucky: {{ fortune()!.stick.lucky_direction }}</span>
+        </div>
+        
+        <div class="poem-section">
+          <h3>Poem</h3>
+          <p class="poem-text">{{ fortune()!.stick.poem_text }}</p>
+        </div>
+
+        <div class="interpretation-section">
+          <h3>Interpretation</h3>
+          <p>{{ fortune()!.stick.interpretation }}</p>
+        </div>
+
+        <div class="seal">
+          <span>{{ fortune()!.daily_fortune.date }}</span>
+        </div>
+      </div>
+      
+      <div class="actions">
+        <button mat-raised-button color="primary" routerLink="/">Back Home</button>
+      </div>
+    </div>
+  } @else {
+    <div class="start-container">
+      <div class="cylinder-static" (click)="drawFortune()">
+        <div class="sticks-top"></div>
+        <div class="container-body">
+          <span class="label">Click to Shake</span>
+        </div>
+      </div>
+      <button mat-raised-button color="warn" (click)="drawFortune()">Shake for Fortune</button>
+    </div>
+  }
+</div>

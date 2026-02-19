@@ -1,0 +1,104 @@
+<div class="gacha-container">
+  <h1>Card Summon</h1>
+  <p>Spend your luck to summon powerful code cards!</p>
+
+  <div class="summon-area">
+    @if (!result()) {
+      <div class="gacha-layout">
+        <div class="wheel-section">
+          <div class="wheel-container">
+            <div class="wheel-pointer"></div>
+            <div class="wheel-outer" [style.transform]="wheelRotation()">
+              <div class="wheel-canvas">
+                <!-- We'll use CSS conic-gradient for the segments -->
+                <div class="wheel-segments"></div>
+                <div class="wheel-center">
+                  <span>XUE</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="summon-box">
+            <button class="summon-btn" (click)="onDraw()" [disabled]="isLoading()">
+              @if (isLoading()) {
+                <span class="loader loader-sm"></span>
+              } @else {
+                {{ isLoggedIn() ? 'Summon Card' : 'Try Your Luck' }}
+              }
+            </button>
+            @if (!isLoggedIn()) {
+              <p class="guest-hint">Login to save your cards to binder!</p>
+            }
+          </div>
+        </div>
+
+        <div class="info-section">
+          <!-- Gacha Rates Table -->
+          <div class="rates-section">
+            <h3>ระดับการ์ดและโอกาสได้รับ</h3>
+            <div class="rates-list">
+              @for (rate of rarityRates; track rate.grade) {
+                <div class="rate-item" [style.border-left-color]="rate.color">
+                  <span class="grade" [style.color]="rate.color">{{ rate.grade }}</span>
+                  <span class="desc">{{ rate.description }}</span>
+                  <span class="percent">{{ rate.rate }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Featured Cards Preview -->
+          <div class="featured-section">
+            <h3>Featured Cards</h3>
+            <div class="featured-grid">
+              @for (card of featuredCards(); track card.id) {
+                <div class="mini-card" [class]="card.rarity.toLowerCase()">
+                  <div class="mini-card-inner">
+                    <div class="mini-symbol">
+                      <img [src]="getLanguageLogo(card.language)" [alt]="card.language">
+                    </div>
+                    <div class="mini-info">
+                      <span class="mini-name">{{ card.name }}</span>
+                      <span class="mini-rarity">{{ card.rarity }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- Gacha Result View -->
+      <div class="result-container" [class]="result()!.card.rarity.toLowerCase()">
+        <div class="result-card-outer">
+          <div class="result-card">
+            <div class="card-rarity-tag">{{ result()!.card.rarity }}</div>
+            <div class="card-logo">
+              <img [src]="getLanguageLogo(result()!.card.language)" [alt]="result()!.card.language">
+            </div>
+            <div class="card-details">
+              <h2>{{ result()!.card.name }}</h2>
+              <div class="card-stats">
+                <div class="stat">
+                  <span class="label">ATK</span>
+                  <span class="value">{{ result()!.card.attack }}</span>
+                </div>
+                <div class="stat">
+                  <span class="label">DEF</span>
+                  <span class="value">{{ result()!.card.defense }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="result-actions">
+          <button class="reset-btn" (click)="reset()">Summon Again</button>
+          <button class="binder-btn" routerLink="/inventory">Go to Binder</button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

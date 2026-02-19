@@ -1,0 +1,56 @@
+@baseUrl = http://127.0.0.1:3000/api/v1
+
+### 1. Authentication - Login (Mock User)
+# @name login
+POST {{baseUrl}}/authentication/login
+Content-Type: application/json
+
+{
+    "username": "Chain93",
+    "password": "anypassword"
+}
+
+### 2. Authentication - Get Google Auth URL
+GET {{baseUrl}}/authentication/google/url
+
+### 3. Brawlers - Get All
+GET {{baseUrl}}/brawlers
+
+### 4. Missions - Get All
+GET {{baseUrl}}/missions
+
+### 5. Missions - Get All with Filter
+GET {{baseUrl}}/missions?name=Test&status=Open
+
+### 6. Cards - Get All
+GET {{baseUrl}}/cards
+
+### 7. Fortune - Get All
+GET {{baseUrl}}/fortune
+
+### 8. Debug - Get All
+GET {{baseUrl}}/debug
+
+### 9. Mission Management - Add Mission (Requires Auth)
+# Use token from login response
+@authToken = {{login.response.body.access_token}}
+
+POST {{baseUrl}}/mission-management/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "name": "New Test Mission",
+    "description": "This is a test mission created via API test suite",
+    "mission_date": "2026-02-12T10:00:00",
+    "time": "10:00 AM",
+    "email": "test@example.com",
+    "phone": "0812345678",
+    "location": "Bangkok, Thailand",
+    "rewards": "100 Gold, 1 Rare Item"
+}
+
+### 10. Missions - Join Mission (Requires Auth)
+# Replace {id} with a valid mission ID
+POST {{baseUrl}}/missions/1/join
+Authorization: Bearer {{authToken}}

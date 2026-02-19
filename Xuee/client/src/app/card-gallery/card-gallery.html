@@ -1,0 +1,57 @@
+<div class="gallery-container">
+  <div class="header-section">
+    <h1>Card Gallery</h1>
+    <p>Collection of all available coding cards in the system.</p>
+  </div>
+
+  <div class="controls-section">
+    <div class="search-box">
+      <input type="text" [value]="searchQuery()" (input)="onSearch($event)" placeholder="Search by name or language...">
+    </div>
+    <div class="filter-chips">
+      <button [class.active]="filterRarity() === 'All'" (click)="setFilter('All')">All</button>
+      <button [class.active]="filterRarity() === 'Legendary'" (click)="setFilter('Legendary')">Legendary</button>
+      <button [class.active]="filterRarity() === 'Epic'" (click)="setFilter('Epic')">Epic</button>
+      <button [class.active]="filterRarity() === 'Rare'" (click)="setFilter('Rare')">Rare</button>
+      <button [class.active]="filterRarity() === 'Common'" (click)="setFilter('Common')">Common</button>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+    @for (card of filteredCards(); track card.id) {
+      <div class="card-item" [class]="card.rarity.toLowerCase()">
+        <div class="rarity-badge">{{ card.rarity }}</div>
+        
+        <div class="card-image">
+          <img [src]="getLogo(card.language)" [alt]="card.language">
+        </div>
+
+        <div class="card-info">
+          <h3>{{ card.name }}</h3>
+          <p class="language-name">{{ card.language }}</p>
+          
+          <div class="stats">
+            <div class="stat">
+              <span class="label">ATK</span>
+              <span class="value">{{ card.attack }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">DEF</span>
+              <span class="value">{{ card.defense }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        @if (isLoading()) {
+          <div class="loading-box">
+            <span class="loader"></span>
+          </div>
+        } @else {
+          <p>No cards found matching your search.</p>
+        }
+      </div>
+    }
+  </div>
+</div>

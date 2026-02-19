@@ -1,0 +1,80 @@
+<div class="mission-container">
+    <div class="header-section">
+        <h2>Mission Manager</h2>
+    </div>
+
+    <div class="actions-bar">
+        <button mat-stroked-button class="zen-btn" (click)="openDialog()">
+            <mat-icon>add</mat-icon> New Mission
+        </button>
+        <button mat-stroked-button class="zen-btn" (click)="addOneSampleMission()">
+            <mat-icon>add_circle</mat-icon> Add 1 Sample Mission
+        </button>
+        <button mat-stroked-button class="zen-btn" (click)="generateTestData()">
+            <mat-icon>playlist_add</mat-icon> Generate Test Data
+        </button>
+        <span class="crew-count">Total Crew: {{totalCrew}}</span>
+    </div>
+
+    @if((myMissions$ | async)?.length) {
+    <div class="table-container">
+        <table mat-table [dataSource]="myMissions$" class="zen-table">
+            <!-- Id Column -->
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> No. </th>
+                <td mat-cell *matCellDef="let mission"> {{mission.id}} </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <td mat-cell *matCellDef="let mission"> <strong>{{mission.name}}</strong> </td>
+            </ng-container>
+
+            <!-- Mission Date Column -->
+            <ng-container matColumnDef="mission_date">
+                <th mat-header-cell *matHeaderCellDef> Mission Date </th>
+                <td mat-cell *matCellDef="let mission"> {{mission.mission_date | date:'mediumDate'}} </td>
+            </ng-container>
+
+            <!-- Description Column -->
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> Description </th>
+                <td mat-cell *matCellDef="let mission"> {{mission.description}} </td>
+            </ng-container>
+
+            <!-- Chief Id Column -->
+            <ng-container matColumnDef="chief_id">
+                <th mat-header-cell *matHeaderCellDef> Chief ID </th>
+                <td mat-cell *matCellDef="let mission"> {{mission.chief_id}} </td>
+            </ng-container>
+
+            <!-- Crew Count Column -->
+            <ng-container matColumnDef="crew_count">
+                <th mat-header-cell *matHeaderCellDef> Crew Count </th>
+                <td mat-cell *matCellDef="let mission"> {{mission.crew_count}} </td>
+            </ng-container>
+
+            <!-- Status Column (click to open mission chat) -->
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef> Status </th>
+                <td mat-cell *matCellDef="let mission">
+                    <button class="status-badge status-button" (click)="openMissionChat(mission, $event)"
+                        title="Open mission chat">
+                        {{formatStatus(mission.status)}}
+                    </button>
+                </td>
+            </ng-container>
+
+            <!-- Created At Column -->
+            <ng-container matColumnDef="created_at">
+                <th mat-header-cell *matHeaderCellDef> Created At </th>
+                <td mat-cell *matCellDef="let mission"> {{mission.created_at | date:'short'}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openMissionChat(row)"></tr>
+        </table>
+    </div>
+    }
+</div>

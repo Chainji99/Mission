@@ -1,0 +1,82 @@
+<div class="mission-chat-view" [class.show-members]="showMembers">
+  <!-- Header -->
+  <div class="chat-header">
+    <button mat-icon-button (click)="close()" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="mission-info">
+      <div class="mission-icon">
+        <mat-icon>fort</mat-icon>
+      </div>
+      <div class="details">
+        <h1>{{ title }}</h1>
+        <span class="room-type">Mission Room</span>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="header-actions">
+      <button mat-icon-button (click)="toggleMembers()" [class.active]="showMembers" title="View Members">
+        <mat-icon>people</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <div class="chat-area">
+      <!-- Messages Area -->
+      <div class="messages-container" #messagesContainer>
+        <div class="messages-list">
+          @for (m of messages; track $index) {
+          <div class="message-row" [class.own]="m.sender === 'You' || m.sender === 'Me'">
+            <div class="message-bubble">
+              @if (m.sender !== 'You' && m.sender !== 'Me') {
+              <div class="sender-name">{{ m.sender }}</div>
+              }
+              <div class="text">{{ m.text }}</div>
+              <div class="time">{{ m.ts | date:'shortTime' }}</div>
+            </div>
+          </div>
+          }
+          @if (messages.length === 0) {
+          <div class="empty-chat">
+            <mat-icon>forum</mat-icon>
+            <p>Welcome to the mission chat. No messages yet!</p>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-container">
+        <div class="input-wrapper">
+          <input [(ngModel)]="input" placeholder="Type a message to the crew..." (keyup.enter)="send()" />
+          <button mat-flat-button color="primary" class="send-btn" (click)="send()" [disabled]="!input.trim()">
+            <mat-icon>send</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Members Sidebar -->
+    @if (showMembers) {
+    <aside class="members-sidebar">
+      <div class="sidebar-header">
+        <span>Crew Members ({{ members.length }})</span>
+      </div>
+      <div class="members-list">
+        @for (user of members; track user.username) {
+        <div class="member-item">
+          <div class="member-avatar">
+            <mat-icon>person</mat-icon>
+          </div>
+          <div class="member-info">
+            <div class="name">{{ user.display_name }}</div>
+            <div class="role">{{ user.role }}</div>
+          </div>
+        </div>
+        }
+      </div>
+    </aside>
+    }
+  </div>
+</div>

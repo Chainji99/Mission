@@ -1,0 +1,153 @@
+<div class="mission-container">
+    <div class="filters-bar">
+        <span class="filter-label">Search</span>
+        <input type="text" [(ngModel)]="filter.name" placeholder="Mission Name" class="search-input">
+        
+        <select [(ngModel)]="filter.status" class="status-select" title="Filter by mission status">
+            <option value="">All</option>
+            <option value="Open">Open</option>
+            <option value="InProgress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Failed">Failed</option>
+        </select>
+
+        <button mat-flat-button (click)="onSubmit()" class="go-btn">
+            Go
+        </button>
+
+        <button mat-flat-button (click)="openDialog()" class="add-btn">
+            New Mission
+        </button>
+    </div>
+
+    @if (isLoading) {
+        <div class="loading-box">
+             <span class="loader"></span>
+        </div>
+    } @else if ((missions$ | async)?.length === 0) {
+        <div class="empty-state">
+             <p>No missions found.</p>
+        </div>
+    }
+
+    <div class="missions-board">
+        <div class="board-header">
+            <h2 class="board-title">Active Missions</h2>
+        </div>
+
+        <div class="missions-grid">
+            @for (mission of (missions$ | async); track mission.id) {
+                <div class="mission-card" [class.expanded]="expandedElement === mission">
+                    <div class="card-glow"></div>
+                    
+                    <div class="card-header">
+                        <span class="status-indicator" [class]="mission.status?.toLowerCase()"></span>
+                        <span class="mission-date">{{mission.mission_date | date:'mediumDate'}}</span>
+                        <div class="mission-id">#{{mission.id}}</div>
+                    </div>
+
+                    <div class="card-body">
+                        <h3 class="mission-name">{{mission.name}}</h3>
+                        <p class="mission-desc">{{mission.description}}</p>
+                        
+                        <div class="mission-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Chief</span>
+                                <span class="meta-value">{{mission.chief_display_name}}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Crew</span>
+                                <div class="crew-visual">
+                                    <span class="crew-count">{{mission.crew_count}}</span>
+                                    <div class="crew-dots">
+                                        @for (i of [1,2,3]; track i) {
+                                            <span class="dot" [class.active]="(mission.crew_count || 0) >= i"></span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button mat-button class="zen-btn detail-btn" (click)="toggleExpand(mission, $event)">
+                            {{expandedElement === mission ? 'Close' : 'View Detail'}}
+                        </button>
+                        <button mat-flat-button class="zen-btn join-btn primary" (click)="join(mission, $event)">
+                            Join Mission
+                        </button>
+                    </div>
+
+                    <!-- Expansion Detail Area -->
+                    @if (expandedElement === mission) {
+                        <div class="expanded-content" [@detailExpand]="expandedElement === mission ? 'expanded' : 'collapsed'">
+                            <div class="detail-grid">
+                                <!-- Left Column: Mission Essence -->
+                                <div class="detail-section mission-essence">
+                                    <h3 class="section-title">
+                                        Mission Essence
+                                    </h3>
+                                    
+                                    <div class="info-cards">
+                                        <div class="info-card">
+                                            <div class="card-content">
+                                                <span class="card-label">DATE</span>
+                                                <span class="card-value">{{mission.mission_date | date:'longDate'}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="info-card">
+                                            <div class="card-content">
+                                                <span class="card-label">TIME</span>
+                                                <span class="card-value">{{mission.time || 'Waiting for creator to specify time'}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="info-card">
+                                            <div class="card-content">
+                                                <span class="card-label">LOCATION</span>
+                                                <span class="card-value">{{mission.location}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="contact-box">
+                                        <div class="contact-row">
+                                            <span class="contact-text">{{mission.email}}</span>
+                                        </div>
+                                        <div class="contact-row">
+                                            <span class="contact-text">{{mission.phone}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column: Description and Rewards -->
+                                <div class="detail-right-column">
+                                    <div class="detail-section objectives-section">
+                                        <h3 class="section-title">
+                                            Objectives
+                                        </h3>
+                                        <div class="description-box">
+                                            <p class="description-text">{{mission.description}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="detail-section rewards-section">
+                                        <h3 class="section-title">
+                                            Bounty & Rewards
+                                        </h3>
+                                        <div class="rewards-wrapper">
+                                            @for (tag of mission.rewards_tags; track tag) {
+                                                <div class="reward-tag">
+                                                    <span class="reward-label">{{tag}}</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

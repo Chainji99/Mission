@@ -1,0 +1,182 @@
+.inventory-container {
+  padding: 2rem;
+  min-height: 80vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: transparent;
+
+  h1 {
+    text-align: center;
+    font-family: var(--font-heading);
+    font-size: 4rem;
+    color: #ffffff;
+    margin-bottom: 2rem;
+    letter-spacing: 6px;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.1);
+    font-weight: normal;
+  }
+}
+
+.binder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.card-item {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  height: 340px;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-body);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    z-index: 10;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Minimalist Borders */
+  &.common { border-top: 3px solid var(--ink-light); }
+  &.rare { border-top: 3px solid var(--ink-medium); }
+  &.epic { border-top: 3px solid var(--ink-black); }
+  &.legendary { border-top: 3px solid var(--red-seal); }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.8rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-family: 'Prompt', sans-serif;
+
+  .rarity {
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 1px;
+  }
+  
+  .level {
+    color: #ffffff;
+    font-weight: 600;
+  }
+}
+
+.card-image {
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Rice paper texture background */
+  background-image: url("https://www.transparenttextures.com/patterns/rice-paper-2.png");
+  opacity: 0.9;
+  padding: 20px;
+  
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+  }
+}
+
+.card-info {
+  padding: 1.2rem;
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.2rem;
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-weight: 600;
+  }
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.8rem;
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .label {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.3);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      font-family: var(--font-body);
+    }
+    
+    .value {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--accent-gold);
+      font-family: 'Courier New', Courier, monospace;
+    }
+  }
+}
+
+.exp-bar {
+  margin-top: 15px;
+  width: 100%;
+  height: 4px;
+  background: var(--ink-light);
+  border-radius: 2px;
+  overflow: hidden;
+  border: none;
+  
+  .progress {
+    height: 100%;
+    background: var(--ink-black);
+  }
+}
+
+.actions {
+  margin-top: 0.5rem;
+  width: 100%;
+  
+  .upgrade-btn {
+    width: 100%;
+    padding: 4px;
+    background: #34495e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    
+    &:hover {
+      background: #2c3e50;
+    }
+  }
+}
+
+.empty-binder {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  color: #95a5a6;
+}

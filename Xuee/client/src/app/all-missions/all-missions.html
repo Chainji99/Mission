@@ -1,0 +1,116 @@
+<div class="all-missions-container">
+  <div class="header-section">
+    <div class="zen-decor">
+      <span class="decor-text">ALL MISSIONS</span>
+      <div class="decor-line"></div>
+    </div>
+    <h1>Mission Board</h1>
+    <p>Choose your destiny. Join a mission and prove your worth.</p>
+  </div>
+
+  <div class="filters-section">
+    <div class="search-box">
+      <mat-form-field appearance="outline" class="zen-field">
+        <mat-label>Search Missions</mat-label>
+        <input matInput [(ngModel)]="filter().name" (keyup.enter)="onSearch()" placeholder="e.g. Temple Guard">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="status-filter">
+      <mat-form-field appearance="outline" class="zen-field">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="filter().status" (selectionChange)="onSearch()">
+          <mat-option value="">All Status</mat-option>
+          <mat-option value="Open">Open</mat-option>
+          <mat-option value="InProgress">In Progress</mat-option>
+          <mat-option value="Completed">Completed</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <button mat-flat-button class="search-btn" (click)="onSearch()">
+      <mat-icon>filter_list</mat-icon>
+      Filter
+    </button>
+  </div>
+
+  @if (isLoading()) {
+  <div class="loading-state">
+    <div class="zen-loader"></div>
+    <p>Consulting the stars...</p>
+  </div>
+  } @else if (missions().length === 0) {
+  <div class="empty-state" @fadeInUp>
+    <mat-icon>sentiment_dissatisfied</mat-icon>
+    <h3>No missions found</h3>
+    <p>The mission board is currently empty. Check back later.</p>
+  </div>
+  } @else {
+  <div class="missions-grid">
+    @for (mission of missions(); track mission.id) {
+    <mat-card class="mission-card" [class.expanded]="expandedMissionId() === mission.id" @fadeInUp>
+      <div class="card-glow"></div>
+      <mat-card-header (click)="toggleExpand(mission.id)">
+        <div mat-card-avatar class="chief-avatar">
+          <span class="chief-initial">{{ (mission.chief_display_name || '?').charAt(0) }}</span>
+        </div>
+        <mat-card-title>{{ mission.name }}</mat-card-title>
+        <mat-card-subtitle>by {{ mission.chief_display_name }}</mat-card-subtitle>
+        <div class="status-badge" [ngClass]="getStatusClass(mission.status)">
+          {{ mission.status }}
+        </div>
+      </mat-card-header>
+
+      <mat-card-content (click)="toggleExpand(mission.id)">
+        <p class="description" [class.expanded]="expandedMissionId() === mission.id">{{ mission.description }}</p>
+
+        <div class="mission-info">
+          <div class="info-item">
+            <mat-icon>event</mat-icon>
+            <span>{{ mission.mission_date | date:'mediumDate' }}</span>
+          </div>
+          <div class="info-item">
+            <mat-icon>group</mat-icon>
+            <span>{{ mission.crew_count }} members joined</span>
+          </div>
+          <div class="info-item">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ mission.location || 'Unknown Location' }}</span>
+          </div>
+        </div>
+
+        @if (expandedMissionId() === mission.id) {
+        <div class="extra-details" @fadeInUp>
+          <div class="detail-item">
+            <mat-icon>email</mat-icon>
+            <span>{{ mission.email || 'No contact email' }}</span>
+          </div>
+          <div class="detail-item">
+            <mat-icon>phone</mat-icon>
+            <span>{{ mission.phone || 'No contact phone' }}</span>
+          </div>
+          <div class="detail-item">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ mission.time || 'Time not specified' }}</span>
+          </div>
+        </div>
+        }
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button class="detail-btn" (click)="toggleExpand(mission.id)">
+          {{ expandedMissionId() === mission.id ? 'Show Less' : 'Details' }}
+        </button>
+        <button mat-button class="chat-btn" (click)="openMissionChat(mission)">
+          <mat-icon>forum</mat-icon> Chat
+        </button>
+        <button mat-flat-button class="join-btn" [disabled]="mission.status !== 'Open'" (click)="joinMission(mission)">
+          {{ mission.status === 'Open' ? 'Join Mission' : 'Closed' }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+    }
+  </div>
+  }
+</div>

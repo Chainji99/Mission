@@ -1,0 +1,278 @@
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+
+    .nebula-bg-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, rgba(197, 160, 89, 0.05) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 1;
+    }
+    
+    .hero-section {
+        text-align: center;
+        max-width: 900px;
+        width: 100%;
+        padding: 5rem 3rem;
+        background: rgba(15, 15, 15, 0.4);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.02);
+        animation: heroReveal 2s cubic-bezier(0.19, 1, 0.22, 1);
+        position: relative;
+        z-index: 2;
+
+        .zen-decor-top {
+            position: absolute;
+            top: 1.5rem;
+            left: 2rem;
+            
+            .decor-id {
+                font-family: var(--font-heading);
+                color: var(--accent-gold);
+                font-size: 1.2rem;
+                opacity: 0.4;
+                letter-spacing: 4px;
+                text-transform: uppercase;
+            }
+        }
+
+        .hero-title {
+            font-family: var(--font-heading) !important;
+            font-size: 6.5rem;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            letter-spacing: -1px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2), 
+                         0 0 40px rgba(197, 160, 89, 0.15);
+            line-height: 1.1;
+            font-weight: normal;
+            animation: titleGlow 4s ease-in-out infinite alternate;
+            
+            @media (max-width: 768px) {
+                font-size: 4rem;
+            }
+        }
+
+        .title-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 0.8s;
+
+            .divider-line {
+                height: 1px;
+                width: 60px;
+                background: linear-gradient(to right, transparent, var(--accent-gold), transparent);
+                opacity: 0.3;
+            }
+
+            .zen-seal {
+                width: 42px;
+                height: 42px;
+                background: var(--red-seal);
+                color: white;
+                font-family: var(--font-heading);
+                font-size: 1.6rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+                box-shadow: 0 0 15px rgba(178, 34, 34, 0.4);
+                transform: rotate(-5deg);
+                transition: all 0.5s ease;
+
+                &:hover {
+                    transform: rotate(0deg) scale(1.1);
+                    box-shadow: 0 0 25px rgba(178, 34, 34, 0.6);
+                }
+            }
+        }
+
+        .subtitle {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 3.5rem;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+            line-height: 1.6;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1s;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: slideUp 1s cubic-bezier(0.19, 1, 0.22, 1) forwards 1.2s;
+
+            .zen-btn {
+                font-family: 'Prompt', sans-serif;
+                font-size: 1rem;
+                padding: 1rem 2.5rem;
+                height: auto;
+                border-radius: 50px;
+                transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                font-weight: 500;
+                position: relative;
+                overflow: hidden;
+
+                &.secondary {
+                    background: rgba(255, 255, 255, 0.02);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    color: rgba(255, 255, 255, 0.8);
+
+                    &:hover {
+                        background: rgba(255, 255, 255, 0.05);
+                        border-color: var(--accent-gold);
+                        color: #ffffff;
+                        transform: translateY(-5px);
+                        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+                    }
+                }
+
+                &.primary {
+                    background: var(--red-seal);
+                    color: #ffffff;
+                    border: none;
+                    box-shadow: 0 10px 25px rgba(178, 34, 34, 0.3);
+
+                    .btn-glow {
+                        position: absolute;
+                        top: 0;
+                        left: -100%;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(
+                            90deg,
+                            transparent,
+                            rgba(255, 255, 255, 0.2),
+                            transparent
+                        );
+                        transition: 0.5s;
+                    }
+
+                    &:hover {
+                        background: #d42a2a;
+                        transform: translateY(-5px) scale(1.02);
+                        box-shadow: 0 20px 40px rgba(178, 34, 34, 0.5);
+
+                        .btn-glow {
+                            left: 100%;
+                        }
+                    }
+                }
+            }
+        }
+
+        .zen-decor-bottom {
+            position: absolute;
+            bottom: -50px;
+            right: -30px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.05) 0%, transparent 70%);
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: -1;
+        }
+    }
+
+    .scroll-indicator {
+        position: absolute;
+        bottom: 3rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        opacity: 0.5;
+        animation: fadeIn 2s ease forwards 2s;
+
+        .mouse {
+            width: 26px;
+            height: 42px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 14px;
+            display: block;
+            position: relative;
+
+            .wheel {
+                width: 4px;
+                height: 8px;
+                background: var(--accent-gold);
+                border-radius: 2px;
+                position: absolute;
+                top: 8px;
+                left: 50%;
+                transform: translateX(-50%);
+                animation: scrollWheel 2s infinite;
+            }
+        }
+    }
+}
+
+@keyframes heroReveal {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes titleGlow {
+    from {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.2), 0 0 40px rgba(197, 160, 89, 0.1);
+    }
+    to {
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(197, 160, 89, 0.3);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scrollWheel {
+    0% { transform: translate(-50%, 0); opacity: 0; }
+    30% { opacity: 1; }
+    100% { transform: translate(-50%, 15px); opacity: 0; }
+}

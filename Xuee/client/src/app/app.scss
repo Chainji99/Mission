@@ -1,3 +1,210 @@
+/* Component-specific global styles */
+@function multiple-box-shadow ($n) {
+  $value: '#{random(3000)}px #{random(3000)}px rgba(255, 255, 255, #{0.4 + random(6) / 10})'; // Variable opacity for softer stars
+
+  @for $i from 2 through $n {
+    $value: '#{$value} , #{random(3000)}px #{random(3000)}px rgba(255, 255, 255, #{0.4 + random(6) / 10})';
+  }
+
+  @return unquote($value);
+}
+
+$shadows-small: multiple-box-shadow(700);
+$shadows-medium: multiple-box-shadow(200);
+$shadows-big: multiple-box-shadow(100);
+
+#stars {
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  box-shadow: $shadows-small;
+  animation: animStar 50s linear infinite;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  &:after {
+    content: " ";
+    position: absolute;
+    top: 3000px;
+    width: 1px;
+    height: 1px;
+    background: transparent;
+    box-shadow: $shadows-small;
+  }
+}
+
+#stars2 {
+  width: 2px;
+  height: 2px;
+  background: transparent;
+  box-shadow: $shadows-medium;
+  animation: animStar 100s linear infinite;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  &:after {
+    content: " ";
+    position: absolute;
+    top: 3000px;
+    width: 2px;
+    height: 2px;
+    background: transparent;
+    box-shadow: $shadows-medium;
+  }
+}
+
+#stars3 {
+  width: 3px;
+  height: 3px;
+  background: transparent;
+  box-shadow: $shadows-big;
+  animation: animStar 150s linear infinite;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  &:after {
+    content: " ";
+    position: absolute;
+    top: 3000px;
+    width: 3px;
+    height: 3px;
+    background: transparent;
+    box-shadow: $shadows-big;
+  }
+}
+
+@keyframes animStar {
+  from {
+    transform: translateY(0px);
+  }
+
+  to {
+    transform: translateY(-3000px);
+  }
+}
+
+#title-bg {
+  position: fixed;
+  top: 50%;
+  left: calc(50% + 140px); // Offset by half of sidebar width (280px/2) to center in content area
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+
+  span {
+    background: -webkit-linear-gradient(white, #38495a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: 8rem;
+    letter-spacing: 20px;
+    text-transform: uppercase;
+  }
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: transparent;
+  color: #ffffff;
+  position: relative;
+  overflow-x: hidden;
+
+  .sidebar-wrapper {
+    width: 280px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    pointer-events: auto;
+    background-color: rgba(9, 10, 15, 0.7); // Dark but slightly transparent
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px); // Stronger blur for glassmorphism
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    overflow-y: auto;
+
+    /* Hide scrollbar for sidebar */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    -ms-overflow-style: none;
+  }
+
+  .main-content {
+    flex: 1;
+    min-height: 100vh;
+    position: relative;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden; // Prevent horizontal scroll
+  }
+}
+
+router-outlet+* {
+  display: block;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Ensure containers have a slight background to be readable against the image */
+mat-card,
+.login-container mat-card,
+.hero-section {
+  background-color: rgba(0, 0, 0, 0.15) !important; // More transparent
+  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
 ngx-spinner p {
-  color: white;
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  letter-spacing: 4px;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+/* Scrollbar Customization - Minimalist */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ink-light);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-medium);
+}
+
+/* Profile Dialog Styles - Globally accessible for MatDialog */
+.discord-profile-dialog .mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.discord-profile-dialog .mat-mdc-dialog-container {
+  background: transparent !important;
 }
